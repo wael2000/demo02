@@ -1,0 +1,153 @@
+{
+  "apiVersion" : "v1",
+  "kind" : "List",
+  "items" : [ {
+    "apiVersion" : "v1",
+    "kind" : "Service",
+    "metadata" : {
+      "annotations" : {
+        "fabric8.io/git-commit" : "3077824f49f7ef3d31c7d6620b352eb8f88c5148",
+        "fabric8.io/iconUrl" : "img/icons/camel.svg",
+        "fabric8.io/git-branch" : "master"
+      },
+      "labels" : {
+        "expose" : "true",
+        "provider" : "fabric8",
+        "project" : "demo02",
+        "version" : "1.0",
+        "group" : "org.mycompany"
+      },
+      "name" : "demo02"
+    },
+    "spec" : {
+      "ports" : [ {
+        "name" : "http",
+        "port" : 80,
+        "protocol" : "TCP",
+        "targetPort" : 8080
+      } ],
+      "selector" : {
+        "project" : "demo02",
+        "provider" : "fabric8",
+        "group" : "org.mycompany"
+      }
+    }
+  }, {
+    "apiVersion" : "v1",
+    "kind" : "DeploymentConfig",
+    "metadata" : {
+      "annotations" : {
+        "fabric8.io/git-commit" : "3077824f49f7ef3d31c7d6620b352eb8f88c5148",
+        "fabric8.io/iconUrl" : "img/icons/camel.svg",
+        "fabric8.io/git-branch" : "master",
+        "fabric8.io/metrics-path" : "dashboard/file/camel-routes.json/?var-project=demo02&var-version=1.0"
+      },
+      "labels" : {
+        "provider" : "fabric8",
+        "project" : "demo02",
+        "version" : "1.0",
+        "group" : "org.mycompany"
+      },
+      "name" : "demo02"
+    },
+    "spec" : {
+      "replicas" : 1,
+      "selector" : {
+        "project" : "demo02",
+        "provider" : "fabric8",
+        "group" : "org.mycompany"
+      },
+      "strategy" : {
+        "rollingParams" : {
+          "timeoutSeconds" : 10800
+        },
+        "type" : "Rolling"
+      },
+      "template" : {
+        "metadata" : {
+          "annotations" : {
+            "fabric8.io/git-commit" : "3077824f49f7ef3d31c7d6620b352eb8f88c5148",
+            "fabric8.io/iconUrl" : "img/icons/camel.svg",
+            "fabric8.io/git-branch" : "master",
+            "fabric8.io/metrics-path" : "dashboard/file/camel-routes.json/?var-project=demo02&var-version=1.0"
+          },
+          "labels" : {
+            "provider" : "fabric8",
+            "project" : "demo02",
+            "version" : "1.0",
+            "group" : "org.mycompany"
+          }
+        },
+        "spec" : {
+          "containers" : [ {
+            "env" : [ {
+              "name" : "KUBERNETES_NAMESPACE",
+              "valueFrom" : {
+                "fieldRef" : {
+                  "fieldPath" : "metadata.namespace"
+                }
+              }
+            }, {
+              "name" : "JAVA_APP_DIR",
+              "value" : "/deployments"
+            } ],
+            "image" : "demo02:1.0",
+            "imagePullPolicy" : "IfNotPresent",
+            "livenessProbe" : {
+              "httpGet" : {
+                "path" : "/health",
+                "port" : 8081
+              },
+              "initialDelaySeconds" : 180
+            },
+            "name" : "spring-boot",
+            "ports" : [ {
+              "containerPort" : 8080,
+              "name" : "http",
+              "protocol" : "TCP"
+            }, {
+              "containerPort" : 9779,
+              "name" : "prometheus",
+              "protocol" : "TCP"
+            }, {
+              "containerPort" : 8778,
+              "name" : "jolokia",
+              "protocol" : "TCP"
+            } ],
+            "readinessProbe" : {
+              "httpGet" : {
+                "path" : "/health",
+                "port" : 8081
+              },
+              "initialDelaySeconds" : 10
+            },
+            "resources" : {
+              "limits" : {
+                "cpu" : "1.0"
+              },
+              "requests" : {
+                "cpu" : "0.2"
+              }
+            },
+            "securityContext" : {
+              "privileged" : false
+            }
+          } ]
+        }
+      },
+      "triggers" : [ {
+        "type" : "ConfigChange"
+      }, {
+        "imageChangeParams" : {
+          "automatic" : true,
+          "containerNames" : [ "spring-boot" ],
+          "from" : {
+            "kind" : "ImageStreamTag",
+            "name" : "demo02:1.0"
+          }
+        },
+        "type" : "ImageChange"
+      } ]
+    }
+  } ]
+}

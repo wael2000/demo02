@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:camel="http://camel.apache.org/schema/spring"
+    xmlns:cxf="http://camel.apache.org/schema/cxf"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="                  http://www.springframework.org/schema/beans      http://www.springframework.org/schema/beans/spring-beans.xsd                  http://camel.apache.org/schema/spring      http://camel.apache.org/schema/spring/camel-spring.xsd             http://camel.apache.org/schema/cxf      http://camel.apache.org/schema/cxf/camel-cxf.xsd">
+    <!-- Define a traditional camel context here -->
+    <cxf:cxfEndpoint
+        address="http://spring-boot-cxf-jaxws:8080/service/accountService"
+        id="accountService" loggingFeatureEnabled="true" serviceClass="sample.ws.service.Hello"/>
+    <bean class="org.enbd.poc.amq.AccountGenerator" id="accountGenerator"/>
+
+    <bean class="org.apache.activemq.camel.component.ActiveMQComponent" id="activemq">
+        <property name="connectionFactory">
+            <bean class="org.apache.activemq.ActiveMQConnectionFactory">
+                <property name="brokerURL" value="tcp://amqbroker-amq-tcp:61616"/>
+                <property name="userName" value="admin"/>
+                <property name="password" value="admin"/>
+            </bean>
+        </property>
+    </bean>
+
+    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+
+        <endpoint id="javaXMLTrans" uri="dozer:javaXMLTrans?sourceModel=sample.ws.service.Account&amp;targetModel=generated_1524219928973.DemoAccount&amp;marshalId=generated_1524219928973&amp;mappingFile=transformation.xml"/>
+        <dataFormats>
+            <jaxb contextPath="generated_1524219928973" id="generated_1524219928973"/>
+        </dataFormats>
+
+        <restConfiguration bindingMode="json_xml" component="servlet" port="8080">
+            <dataFormatProperty key="xml.out.mustBeJAXBElement" value="false"/>
+            <dataFormatProperty key="prettyPrint" value="true"/>
+            <apiProperty key="cors" value="true"/>
+            <apiProperty key="api.title" value="Customer Camel REST API"/>
+            <apiProperty key="api.version" value="1.0.0"/>
+        </restConfiguration>
+
+        <rest path="/json">
+            <get bindingMode="json" outType="sample.ws.service.Account"
+                produces="application/json" type="java.lang.String" uri="/accounts/{id}">
+                <description>Get Account based on id</description>
+                <to uri="direct:account"/>
+            </get>
+            <post bindingMode="json" outType="sample.ws.service.Account"
+                produces="application/json" type="java.lang.String" uri="accounts/{id}">
+                <description>Get Account based on id</description>
+                <to uri="direct:account"/>
+            </post>
+        </rest>
+
+        <rest consumes="application/xml" path="/xml" produces="application/xml">
+            <post bindingMode="xml" outType="sample.ws.service.Account"
+                produces="application/xml" type="java.lang.String" uri="/accounts/{id}">
+                <description>Get Account based on id</description>
+                <to uri="direct:accountxml"/>
+            </post>
+            <get bindingMode="xml" outType="sample.ws.service.Account"
+                produces="application/xml" type="java.lang.String" uri="/accounts/{id}">
+                <description>Get Account based on id</description>
+                <to uri="direct:accountxml"/>
+            </get>
+        </rest>
+
+        <rest consumes="application/json" path="/jms" produces="application/json">
+            <get bindingMode="json" outType="sample.ws.service.Account"
+                produces="application/json" type="java.lang.String" uri="/accounts">
+                <description>Queue Accounts</description>
+                <to uri="direct:accountjms"/>
+            </get>
+        </rest>
+
+        <route id="soap_to_rest_route">
+            <from id="_fromAccountXml" uri="direct:accountxml"/>
+            <setBody id="_acct_xml_id">
+                <simple>${header.id}</simple>
+            </setBody>
+            <to id="soapCallXML" uri="cxf:bean:accountService?defaultOperationName=getAccount"/>
+            <setBody id="_accountxml">
+                <simple>${body[0]}</simple>
+            </setBody>
+            <to id="_to1" uri="ref:javaXMLTrans"/>
+        </route>
+        <route id="soap_to_rest_json_route">
+            <from id="fromProducts" uri="direct:account"/>
+            <setBody id="_acct_id">
+                <simple>${header.id}</simple>
+            </setBody>
+            <to id="soapCall" uri="cxf:bean:accountService?defaultOperationName=getAccount"/>
+            <setHeader headerName="content-type" id="_setHeader1">
+                <simple>application/json</simple>
+            </setHeader>
+            <setBody id="_account">
+                <simple>${body[0]}</simple>
+            </setBody>
+        </route>
+
+        <route id="_produce_jms_route">
+            <from id="fromxmlAcct" uri="direct:accountjms"/>
+            <!-- <bean id="route-new-account" method="generateAccounts" ref="accountGenerator"/> -->
+            <split id="_account_splitter">
+                <xpath>/accounts/account</xpath>
+                <to id="queue-account" uri="activemq:queue:incomingAccounts?disableTimeToLive=true&amp;disableReplyTo=true"/>
+            </split>
+            <setHeader headerName="content-type" id="_setHeaderjms1">
+                <simple>application/json</simple>
+            </setHeader>
+            <setBody id="_setbodyXML">
+                <simple>Done!</simple>
+            </setBody>
+        </route>
+
+
+        <route id="readHttpStreamAndDumpToFile">
+            <from id="readHttpStreamAndDumpToFileStarter" uri="jetty:http://0.0.0.0:8123?disableStreamCache=true"/>
+            <log id="logStreamClass" message="Handling a stream of class : ${body.class}"/>
+            <log id="logHttpHeaders" message="${headers}"/>
+            <to id="writeTodile" uri="file:out"/>
+            <setBody id="setResponseBody">
+                <constant>DONE</constant>
+            </setBody>
+        </route>
+    </camelContext>
+</beans>
