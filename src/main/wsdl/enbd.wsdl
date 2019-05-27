@@ -1,0 +1,149 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<wsdl:definitions xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://service.ws.sample/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns1="http://schemas.xmlsoap.org/soap/http" name="HelloService" targetNamespace="http://service.ws.sample/">
+  <wsdl:types>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://service.ws.sample/" elementFormDefault="unqualified" targetNamespace="http://service.ws.sample/" version="1.0">
+
+  <xs:element name="Account" type="tns:account"/>
+
+  <xs:element name="getAccount" type="tns:getAccount"/>
+
+  <xs:element name="getAccountResponse" type="tns:getAccountResponse"/>
+
+  <xs:element name="getAccounts" type="tns:getAccounts"/>
+
+  <xs:element name="getAccountsResponse" type="tns:getAccountsResponse"/>
+
+  <xs:element name="sayHello" type="tns:sayHello"/>
+
+  <xs:element name="sayHelloResponse" type="tns:sayHelloResponse"/>
+
+  <xs:complexType name="getAccount">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="id" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="getAccountResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:account"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="account">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="addressLine1" type="xs:string"/>
+      <xs:element minOccurs="0" name="addressLine2" type="xs:string"/>
+      <xs:element minOccurs="0" name="charges" type="xs:int"/>
+      <xs:element minOccurs="0" name="company" type="xs:string"/>
+      <xs:element minOccurs="0" name="email" type="xs:string"/>
+      <xs:element minOccurs="0" name="firstName" type="xs:string"/>
+      <xs:element minOccurs="0" name="id" type="xs:int"/>
+      <xs:element minOccurs="0" name="lastName" type="xs:string"/>
+      <xs:element minOccurs="0" name="total" type="xs:int"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="getAccounts">
+    <xs:sequence/>
+  </xs:complexType>
+
+  <xs:complexType name="getAccountsResponse">
+    <xs:sequence>
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="return" type="tns:account"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="sayHello">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="myname" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="sayHelloResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+</xs:schema>
+  </wsdl:types>
+  <wsdl:message name="getAccountsResponse">
+    <wsdl:part element="tns:getAccountsResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getAccount">
+    <wsdl:part element="tns:getAccount" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="sayHello">
+    <wsdl:part element="tns:sayHello" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getAccountResponse">
+    <wsdl:part element="tns:getAccountResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getAccounts">
+    <wsdl:part element="tns:getAccounts" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="sayHelloResponse">
+    <wsdl:part element="tns:sayHelloResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="Hello">
+    <wsdl:operation name="getAccount">
+      <wsdl:input message="tns:getAccount" name="getAccount">
+    </wsdl:input>
+      <wsdl:output message="tns:getAccountResponse" name="getAccountResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getAccounts">
+      <wsdl:input message="tns:getAccounts" name="getAccounts">
+    </wsdl:input>
+      <wsdl:output message="tns:getAccountsResponse" name="getAccountsResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="sayHello">
+      <wsdl:input message="tns:sayHello" name="sayHello">
+    </wsdl:input>
+      <wsdl:output message="tns:sayHelloResponse" name="sayHelloResponse">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="HelloServiceSoapBinding" type="tns:Hello">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="getAccount">
+      <soap:operation soapAction="urn:GetAccount" style="document"/>
+      <wsdl:input name="getAccount">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="getAccountResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getAccounts">
+      <soap:operation soapAction="urn:GetAccounts" style="document"/>
+      <wsdl:input name="getAccounts">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="getAccountsResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="sayHello">
+      <soap:operation soapAction="urn:SayHello" style="document"/>
+      <wsdl:input name="sayHello">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="sayHelloResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="HelloService">
+    <wsdl:port binding="tns:HelloServiceSoapBinding" name="HelloPort">
+      <soap:address location="http://spring-boot-cxf-jaxws-fis.192.168.99.100.nip.io/service/accountService"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

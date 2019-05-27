@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xml>
+<accounts>
+   <account>
+       <addressLine1>AddressLine1_123</addressLine1>
+       <addressLine2>AddressLine2_123</addressLine2>
+       <charges>12300</charges>
+       <company>red hat</company>
+       <email>Name_123@redhat.com</email>
+       <firstName>First Name_123</firstName>
+       <id>123</id>
+       <lastName>Last Name_123</lastName>
+       <total>1230000</total>
+    </account>
+    <account>
+       <addressLine2>AddressLine2_100</addressLine2>
+       <charges>10000</charges>
+       <company>red hat</company>
+       <email>Name_100@redhat.com</email>
+       <firstName>First Name_100</firstName>
+       <id>100</id>
+       <lastName>Last Name_100</lastName>
+       <total>1000000</total>
+    </account>
+    <account>
+        <addressLine1>AddressLine1_250</addressLine1>
+        <addressLine2>AddressLine2_250</addressLine2>
+        <charges>25000</charges>
+        <company>red hat</company>
+        <email>Name_250@redhat.com</email>
+        <firstName>First Name_250</firstName>
+        <id>250</id>
+        <lastName>Last Name_250</lastName>
+        <total>2500000</total>       
+    </account>        
+</accounts>

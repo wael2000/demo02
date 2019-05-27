@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<mappings xmlns="http://dozermapper.github.io/schema/bean-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://dozermapper.github.io/schema/bean-mapping https://dozermapper.github.io/schema/bean-mapping.xsd">
+    <configuration>
+        <wildcard>false</wildcard>
+    </configuration>
+    <mapping>
+        <class-a>sample.ws.service.Account</class-a>
+        <class-b>generated_1524219928973.DemoAccount</class-b>
+        <field>
+            <a>id</a>
+            <b>id</b>
+        </field>
+        <field>
+            <a>email</a>
+            <b>email</b>
+        </field>
+        <field>
+            <a>company</a>
+            <b>company</b>
+        </field>
+    </mapping>
+    <mapping>
+        <class-a>org.apache.camel.component.dozer.ExpressionMapper</class-a>
+        <class-b>generated_1524219928973.DemoAccount</class-b>
+        <field custom-converter-id="_expressionMapping" custom-converter-param="simple:\${body[0].lastName}, \${body[0].firstName}">
+            <a>expression</a>
+            <b>name</b>
+        </field>
+        <field custom-converter-id="_expressionMapping" custom-converter-param="simple:\${body[0].addressLine1} , \${body[0].addressLine2}">
+            <a>expression</a>
+            <b>address</b>
+        </field>
+        <field custom-converter-id="_expressionMapping" custom-converter-param="javaScript:parseInt(body.total) - parseInt(body.charges)">
+            <a>expression</a>
+            <b>net</b>
+        </field>
+    </mapping>
+</mappings>
