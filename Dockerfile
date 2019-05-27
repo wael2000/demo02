@@ -7,7 +7,7 @@ ENV JAVA_OPTIONS -Xmx256m -Djava.security.egd=file:///dev/./urandom
 
 EXPOSE 8080
 
-ADD target/orchestrator-1.0.jar /deployments/
+ADD target/demo02-1.0.jar /deployments/
 
 #FROM fuse7-java-openshift:1.1
 #ENV JAVA_APP_DIR=/deployments
